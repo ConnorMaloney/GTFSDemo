@@ -3,7 +3,7 @@
 Find all route_id's based on title of stop 
 Example:
     IN: Grand Central
-    OUT: 6, 7, 9
+    OUT: 6, 7, GS
 */
 const fs = require('fs');
 const readline = require('readline');
@@ -22,6 +22,7 @@ rl.question('What stop would you like to look for? ', (answer) => {
     const myRoutes = grabRoutesForStop(answer);
     console.log(myRoutes);
 
+    // Write contents to file, using GTFS format
     fs.writeFile("my_routes.txt", 'route_id\n' + [...myRoutes].join('\n'), function(err) {
         if(err) {
             return console.log(err);
@@ -33,23 +34,23 @@ rl.question('What stop would you like to look for? ', (answer) => {
 
 // Grab routes based on stop name
 function grabRoutesForStop(stopName) {
-        console.log('You have selected: ' + stopName);
+    console.log('You have selected: ' + stopName);
 
-        // Find stop id's that have stopName in them
-        const routesFound = new Set();
-        for (var i in stopsData) {
-            if (stopsData[i].toLowerCase().includes(stopName.toLowerCase())) {
+    // Find stop id's that have stopName in them
+    const routesFound = new Set();
+    for (var i in stopsData) {
+        if (stopsData[i].toLowerCase().includes(stopName.toLowerCase())) {
 
-                // If route found has a 9, switch to GS as this is the route id for shuttle between Grand Central and Times Square
-                if (stopsData[i].charAt(0) == '9') {
-                    routesFound.add('GS')
-                }
+            // If route found has a 9, switch to GS as this is the route id for shuttle between Grand Central and Times Square
+            if (stopsData[i].charAt(0) == '9') {
+                routesFound.add('GS')
+            }
 
-                else {
-                    routesFound.add(stopsData[i].charAt(0)) // Only grab first character of stop_id, as this specifies route_id
-                }
+            else {
+                routesFound.add(stopsData[i].charAt(0)) // Only grab first character of stop_id, as this specifies route_id
             }
         }
-        return routesFound;
+    }
+    return routesFound;
 }
 
